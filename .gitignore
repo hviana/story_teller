@@ -1,0 +1,7 @@
+models/gtos/*
+!models/gtos/.gitkeep
+models/stog/*
+!models/stog/.gitkeep
+deno
+deno.exe
+wordnet.data

@@ -1,0 +1,264 @@
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Visualizing Graph Triples</title>
+      <script src="https://d3js.org/d3.v7.min.js"></script>
+   </head>
+   <body style="margin:20px;">
+      <h1>Visualizing Graph Triples</h1>
+      <textarea id="triples" style="width:100%;height:150px;"></textarea>
+	  <button type="button" onclick="drawInput()">generate</button>
+      <div id="svg-body" class="panel-body">
+		  <svg class="d3-svg" width="100%", height="auto"></svg>
+	  </div>
+      <script>
+
+const svg = d3.select("#svg-body .d3-svg")
+var graph;
+
+function drawInput() {
+    graph = triplesToGraph(JSON.parse(document.querySelector('#triples').value).map(function(e) {
+        return {
+            subject: e[0],
+            predicate: e[1],
+            object: e[2]
+        }
+    }));
+    update();
+}
+
+function filterNodesById(nodes, id) {
+    return nodes.filter(function(n) {
+        return n.id === id;
+    });
+}
+
+function triplesToGraph(triples) {
+
+    svg.html("");
+    //Graph
+    var graph = {
+        nodes: [],
+        links: []
+    };
+
+    //Initial Graph from triples
+    triples.forEach(function(triple) {
+        var subjId = triple.subject;
+        var predId = triple.predicate;
+        var objId = triple.object;
+
+        var subjNode = filterNodesById(graph.nodes, subjId)[0];
+        var objNode = filterNodesById(graph.nodes, objId)[0];
+
+        if (subjNode == null) {
+            subjNode = {
+                id: subjId,
+                label: subjId,
+                weight: 1
+            };
+            graph.nodes.push(subjNode);
+        }
+
+        if (objNode == null) {
+            objNode = {
+                id: objId,
+                label: objId,
+                weight: 1
+            };
+            graph.nodes.push(objNode);
+        }
+
+        graph.links.push({
+            source: subjNode,
+            target: objNode,
+            predicate: predId,
+            weight: 1
+        });
+    });
+
+    return graph;
+}
+
+
+function update() {
+    // ==================== Add Marker ====================
+    svg.append("svg:defs").selectAll("marker")
+        .data(["end"])
+        .enter().append("svg:marker")
+        .attr("id", String)
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 30)
+        .attr("refY", -0.5)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("svg:polyline")
+        .attr("points", "0,-5 10,0 0,5");
+
+    // ==================== Add Links ====================
+    var links = svg.selectAll(".link")
+        .data(graph.links)
+        .enter()
+        .append("line")
+        .attr("marker-end", "url(#end)")
+        .attr("class", "link")
+        .attr("stroke-width", 1); //links
+
+    // ==================== Add Link Names =====================
+    var linkTexts = svg.selectAll(".link-text")
+        .data(graph.links)
+        .enter()
+        .append("text")
+        .attr("class", "link-text")
+        .text(function(d) {
+            return d.predicate;
+        });
+
+    // ==================== Add Link Names =====================
+    var nodeTexts = svg.selectAll(".node-text")
+        .data(graph.nodes)
+        .enter()
+        .append("text")
+        .attr("class", "node-text")
+        .text(function(d) {
+            return d.label;
+        });
+    const simulation = d3.forceSimulation(graph.nodes)
+        .force('charge', d3.forceManyBody().strength(-100))
+        .force('center', d3.forceCenter(document.querySelector('#svg-body .d3-svg').clientWidth / 2, document.querySelector('#svg-body .d3-svg').clientHeight / 2))
+        .force('link', d3.forceLink().links(graph.links))
+        .force('charge', d3.forceManyBody().strength(-20))
+        .force('collide',d3.forceCollide().radius(40).iterations(2));
+
+
+    var nodes = svg.selectAll(".node")
+        .data(graph.nodes)
+        .enter()
+        .append("circle")
+        .attr("class", "node")
+        .attr("r", 8); //nodes
+    simulation.nodes(graph.nodes)
+
+    simulation.force('link').links(graph.links)
+    const r = 30
+    svg.call(d3.drag()
+        .container(svg.node())
+        .subject(dragsubject)
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended)
+    )
+
+    function update() {
+        ctx.beginPath()
+        ctx.globalAlpha = 0.5
+        ctx.strokeStyle = 'blue'
+        graph.links.forEach(drawLink)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.globalAlpha = 1
+        graph.nodes.forEach(drawNode)
+        ctx.fill()
+    }
+
+    function dragsubject(event) {
+        return simulation.find(event.x, event.y, r);
+    }
+
+    function drawNode(d) {
+        ctx.fillStyle = color(d.party)
+        ctx.moveTo(d.x, d.y)
+        ctx.arc(d.x, d.y, r, 0, Math.PI * 2)
+    }
+
+    function drawLink(l) {
+        ctx.moveTo(l.source.x, l.source.y)
+        ctx.lineTo(l.target.x, l.target.y)
+    }
+
+    function dragstarted(event) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+    }
+
+    function dragged(event) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+    }
+
+    function dragended(event) {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+    }
+
+    simulation.on("tick", function() {
+        nodes
+            .attr("cx", function(d) {
+                return d.x;
+            })
+            .attr("cy", function(d) {
+                return d.y;
+            });
+        links
+            .attr("x1", function(d) {
+                return d.source.x;
+            })
+            .attr("y1", function(d) {
+                return d.source.y;
+            })
+            .attr("x2", function(d) {
+                return d.target.x;
+            })
+            .attr("y2", function(d) {
+                return d.target.y;
+            });
+        nodeTexts
+            .attr("x", function(d) {
+                return d.x + 12;
+            })
+            .attr("y", function(d) {
+                return d.y + 3;
+            });
+        linkTexts
+            .attr("x", function(d) {
+                return 4 + (d.source.x + d.target.x) / 2;
+            })
+            .attr("y", function(d) {
+                return 4 + (d.source.y + d.target.y) / 2;
+            });
+    });
+}
+         
+      </script>
+      <style type="text/css">
+         .node {
+         stroke: #fff;
+         fill:#ddd;
+         stroke-width: 1.5px;
+         }
+         .link {
+         stroke: #999;
+         stroke-opacity: .6;
+         stroke-width: 1px;
+         }
+         marker {
+         stroke: #999;
+         fill:rgba(124,240,10,0);
+         }
+         .node-text {
+         font: 11px sans-serif;
+         fill:black;
+         }
+         .link-text {
+         font: 9px sans-serif;
+         fill:grey;
+         }
+         svg{
+         border:1px solid black;
+         }
+      </style>
+   </body>
