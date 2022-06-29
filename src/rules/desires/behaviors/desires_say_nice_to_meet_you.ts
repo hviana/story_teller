@@ -23,7 +23,7 @@ const desiresSayNiceToMeetYou = new Rule(
         {
           premise: {
             fbe: "Beliefs",
-            attr: "fromInput.commands.receiveNames",
+            attr: "fromInput.behaviors.receiveSomeoneName",
           },
         },
       ],
@@ -34,9 +34,9 @@ const desiresSayNiceToMeetYou = new Rule(
     ) => {
       const niceToMeetYouAMR = generator.sayNiceToMeetYou(
         utils.subGraphAt(
-          context["Beliefs"].get("fromInput.commands.receiveNames")
+          context["Beliefs"].get("fromInput.behaviors.receiveSomeoneName")
             .graph,
-          context["Beliefs"].get("fromInput.commands.receiveNames")
+          context["Beliefs"].get("fromInput.behaviors.receiveSomeoneName")
             .ids[0], //TODO use all names
         ),
       );

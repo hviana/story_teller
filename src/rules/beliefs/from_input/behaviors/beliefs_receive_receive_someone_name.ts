@@ -6,9 +6,9 @@ import {
   Rule,
 } from "../../../../../deps.ts";
 import CommunicationFragment from "../../../../types/communication_fragment.ts";
-const beliefsReceiveNames = new Rule(
+const beliefsReceiveSomeoneName = new Rule(
   {
-    name: "BeliefsReceiveNames",
+    name: "BeliefsReceiveSomeoneName",
     condition: {
       premise: {
         fbe: "Inputs",
@@ -21,7 +21,9 @@ const beliefsReceiveNames = new Rule(
     ) => {
       const newInput = context["Inputs"].get("data");
       const query = new AMRQuery(newInput);
-      const ids = QueryCore.runY((y: any) => query.receiveNames(y));
+      const ids = QueryCore.runY((y: any) =>
+        query.core.search("behaviors.receiveSomeoneName", y)
+      );
       if (ids.length > 0) {
         context["Beliefs"].set(
           {
@@ -41,4 +43,4 @@ const beliefsReceiveNames = new Rule(
   },
 );
 
-export { beliefsReceiveNames };
+export { beliefsReceiveSomeoneName };

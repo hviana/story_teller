@@ -23,7 +23,7 @@ export {
   AMRGenerator,
   GeneratorCore,
 } from "https://deno.land/x/amr_generator/mod.ts";
-export type { WordClass } from "https://deno.land/x/amr_query/mod.ts";
+export type { WordClass } from "https://raw.githubusercontent.com/hviana/wordnet_ts/main/mod.ts";
 export { lvar, run } from "https://deno.land/x/logic_ts/mod.ts";
 
 export { readLines } from "https://deno.land/std/io/buffer.ts";

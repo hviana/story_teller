@@ -41,7 +41,9 @@ const beliefsReviews: any = {
     ) => {
       const query = new AMRQuery(input);
       return {
-        ids: QueryCore.runY((y: any) => query.receiveGenAsk(y)),
+        ids: QueryCore.runY((y: any) =>
+          query.core.search("behaviors.receiveGenAsk", y)
+        ),
         extra: {
           time: Date.now(), //to force detect change
         },
@@ -53,7 +55,9 @@ const beliefsReviews: any = {
     ) => {
       const query = new AMRQuery(input);
       return {
-        ids: QueryCore.runY((y: any) => query.receiveHi(y)),
+        ids: QueryCore.runY((y: any) =>
+          query.core.search("behaviors.receiveHi", y)
+        ),
         extra: {
           time: Date.now(), //to force detect change
         },
@@ -65,7 +69,9 @@ const beliefsReviews: any = {
     ) => {
       const query = new AMRQuery(input);
       return {
-        ids: QueryCore.runY((y: any) => query.receiveGoodbye(y)),
+        ids: QueryCore.runY((y: any) =>
+          query.core.search("behaviors.receiveGoodbye", y)
+        ),
         extra: {
           time: Date.now(), //to force detect change
         },
@@ -79,7 +85,9 @@ const beliefsReviews: any = {
     ) => {
       const query = new AMRQuery(input);
       return {
-        ids: QueryCore.runY((y: any) => query.receiveNames(y)),
+        ids: QueryCore.runY((y: any) =>
+          query.core.search("commands.receiveNames", y)
+        ),
         extra: {
           time: Date.now(), //to force detect change
         },

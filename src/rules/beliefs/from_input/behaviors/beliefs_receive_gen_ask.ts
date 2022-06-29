@@ -27,7 +27,9 @@ const beliefsReceiveGenAsk = new Rule(
     ) => {
       const newInput = context["Inputs"].get("data");
       const query = new AMRQuery(newInput);
-      const ids = QueryCore.runY((y: any) => query.receiveGenAsk(y));
+      const ids = QueryCore.runY((y: any) =>
+        query.core.search("behaviors.receiveGenAsk", y)
+      );
       if (ids.length > 0) {
         const communicationFragment: CommunicationFragment = {
           ids: ids,

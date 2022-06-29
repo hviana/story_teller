@@ -21,7 +21,9 @@ const beliefsReceiveGoodbye = new Rule(
     ) => {
       const newInput = context["Inputs"].get("data");
       const query = new AMRQuery(newInput);
-      const ids = QueryCore.runY((y: any) => query.receiveGoodbye(y));
+      const ids = QueryCore.runY((y: any) =>
+        query.core.search("behaviors.receiveGoodbye", y)
+      );
       if (ids.length > 0) {
         context["Beliefs"].set(
           {

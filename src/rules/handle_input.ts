@@ -16,7 +16,7 @@ const handleInput = new Rule(
     action: async (context: any, notifications: any) => {
       const newInputAMR = await NLP.parse(context["Inputs"].get("text"));
       const query = new AMRQuery(newInputAMR);
-      const sentences = QueryCore.runY((y: any) => query.sentences(y));
+      const sentences = QueryCore.runY((y: any) => query.core.sentences(y));
       if (sentences.length) {
         for (const s of sentences) {
           context["Inputs"].set({

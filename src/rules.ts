@@ -5,6 +5,7 @@ export {
   beliefsReceiveGenAsk,
   beliefsReceiveGoodbye,
   beliefsReceiveHi,
+  beliefsReceiveSomeoneName,
   beliefsReports,
 } from "./rules/handle_beliefs.ts";
 
