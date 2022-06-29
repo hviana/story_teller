@@ -86,7 +86,7 @@ const beliefsReviews: any = {
       const query = new AMRQuery(input);
       return {
         ids: QueryCore.runY((y: any) =>
-          query.core.search("commands.receiveNames", y)
+          query.core.search("behaviors.receiveSomeoneName", y)
         ),
         extra: {
           time: Date.now(), //to force detect change
