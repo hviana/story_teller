@@ -145,7 +145,7 @@ for await (const line of readLines(Deno.stdin)) {
         const bestMatch = utils.searchPattern(
           dataContext,
           newInput,
-          [utils.rootId(newInput)],
+          utils.rootId(newInput),
           false,
         )[0];
         dataContext = utils.joinGraph(
