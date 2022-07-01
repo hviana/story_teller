@@ -1,13 +1,7 @@
 export { handleInput } from "./rules/handle_input.ts";
 export { handleOutput } from "./rules/handle_output.ts";
 
-export {
-  beliefsReceiveGenAsk,
-  beliefsReceiveGoodbye,
-  beliefsReceiveHi,
-  beliefsReceiveSomeoneName,
-  beliefsReports,
-} from "./rules/handle_beliefs.ts";
+export { beliefsReports, beliefsTopProb } from "./rules/handle_beliefs.ts";
 
 export {
   desiresAnswerGenAsk,
